@@ -1,0 +1,233 @@
+{
+  "approaches": {
+    "rules": {
+      "run_date": "2026-10-01",
+      "python": "3.13.15",
+      "scikit_learn": "1.9.1",
+      "approach": "Keyword rules",
+      "predicts": "queue",
+      "patterns": 43,
+      "seconds_per_ticket": 2.4966125727280395e-05,
+      "cost_per_10k_tickets_gbp": 0.0,
+      "metrics": {
+        "intent_accuracy": null,
+        "macro_f1": null,
+        "queue_accuracy": 0.7838,
+        "security_recall": 0.7083,
+        "security_missed": 70,
+        "harm_per_1000": 1253.2,
+        "automation_rate": 0.6925,
+        "automation_precision": 0.7257,
+        "queue_recall": {
+          "account": 0.6167,
+          "disputes": 0.5281,
+          "payments": 0.5662,
+          "security": 0.7083,
+          "self_serve": 0.9675
+        },
+        "harm_by_source": {
+          "human_to_bot": 0.403,
+          "bot_wrong_answer": 0.401,
+          "security_missed": 0.181,
+          "human_to_wrong_human": 0.007,
+          "bot_to_human": 0.005,
+          "bot_to_security": 0.003
+        },
+        "worst_confusions": [
+          {
+            "true": "self_serve",
+            "predicted": "self_serve",
+            "count": 1548,
+            "cost": 1548.0,
+            "example": "How do I locate my card?"
+          },
+          {
+            "true": "payments",
+            "predicted": "self_serve",
+            "count": 341,
+            "cost": 1023.0,
+            "example": "How long does the cash withdrawal take to pend?"
+          },
+          {
+            "true": "security",
+            "predicted": "self_serve",
+            "count": 67,
+            "cost": 670.0,
+            "example": "Help! Someone stole my card!"
+          },
+          {
+            "true": "disputes",
+            "predicted": "self_serve",
+            "count": 132,
+            "cost": 396.0,
+            "example": "I made a currency exchange and think I was charged more than I should of been."
+          },
+          {
+            "true": "account",
+            "predicted": "self_serve",
+            "count": 45,
+            "cost": 135.0,
+            "example": "I do not have what is required to prove my identity"
+          },
+          {
+            "true": "self_serve",
+            "predicted": "payments",
+            "count": 34,
+            "cost": 17.0,
+            "example": "I still have not received my new card, I ordered over a week ago."
+          },
+          {
+            "true": "disputes",
+            "predicted": "payments",
+            "count": 13,
+            "cost": 13.0,
+            "example": "My cash withdrawal was partly declined"
+          },
+          {
+            "true": "self_serve",
+            "predicted": "security",
+            "count": 12,
+            "cost": 12.0,
+            "example": "I did not get my card yet, is it lost?"
+          },
+          {
+            "true": "security",
+            "predicted": "account",
+            "count": 1,
+            "cost": 10.0,
+            "example": "my phone was taken! can you place cancel my account so no one uses it"
+          },
+          {
+            "true": "security",
+            "predicted": "disputes",
+            "count": 1,
+            "cost": 10.0,
+            "example": "im so mad right now. theres several charges that I think my x boyfriend made on my card. the companys on the website wouldn't refund me my money, they told me to contact my bank. DO something please."
+          }
+        ]
+      }
+    },
+    "tfidf": {
+      "run_date": "2026-10-01",
+      "python": "3.13.15",
+      "scikit_learn": "1.9.1",
+      "approach": "TF-IDF + logistic regression",
+      "predicts": "intent",
+      "C": 30,
+      "cv_macro_f1_by_C": {
+        "1": 0.8879869834177745,
+        "3": 0.899295629570011,
+        "10": 0.902562501023717,
+        "30": 0.9038065383444742,
+        "100": 0.9015513396552259
+      },
+      "seconds_per_ticket": 4.7826298585089e-05,
+      "cost_per_10k_tickets_gbp": 0.0,
+      "metrics": {
+        "intent_accuracy": 0.9146,
+        "macro_f1": 0.9148,
+        "queue_accuracy": 0.9666,
+        "security_recall": 0.975,
+        "security_missed": 6,
+        "harm_per_1000": 90.7,
+        "automation_rate": 0.5185,
+        "automation_precision": 0.9781,
+        "queue_recall": {
+          "account": 0.95,
+          "disputes": 0.9469,
+          "payments": 0.955,
+          "security": 0.975,
+          "self_serve": 0.9762
+        },
+        "harm_by_source": {
+          "human_to_bot": 0.354,
+          "bot_wrong_answer": 0.265,
+          "security_missed": 0.215,
+          "human_to_wrong_human": 0.093,
+          "bot_to_human": 0.063,
+          "bot_to_security": 0.011
+        },
+        "worst_confusions": [
+          {
+            "true": "card_payment_not_recognised",
+            "predicted": "request_refund",
+            "count": 1,
+            "cost": 10.0,
+            "example": "I think there has been a purchase made that wasn't by me."
+          },
+          {
+            "true": "compromised_card",
+            "predicted": "card_linking",
+            "count": 1,
+            "cost": 10.0,
+            "example": "How do I freeze my card using the app?"
+          },
+          {
+            "true": "direct_debit_payment_not_recognised",
+            "predicted": "extra_charge_on_statement",
+            "count": 1,
+            "cost": 10.0,
+            "example": "I was charged on my account that shouldn't be there."
+          },
+          {
+            "true": "direct_debit_payment_not_recognised",
+            "predicted": "request_refund",
+            "count": 1,
+            "cost": 10.0,
+            "example": "im so mad right now. theres several charges that I think my x boyfriend made on my card. the companys on the website wouldn't refund me my money, they told me to contact my bank. DO something please."
+          },
+          {
+            "true": "lost_or_stolen_card",
+            "predicted": "topping_up_by_card",
+            "count": 1,
+            "cost": 10.0,
+            "example": "I cannot find my credit card."
+          },
+          {
+            "true": "lost_or_stolen_card",
+            "predicted": "transaction_charged_twice",
+            "count": 1,
+            "cost": 10.0,
+            "example": "Is a copy of the police report necessary for completing the report process?"
+          },
+          {
+            "true": "unable_to_verify_identity",
+            "predicted": "why_verify_identity",
+            "count": 3,
+            "cost": 9.0,
+            "example": "I cannot verify my identity"
+          },
+          {
+            "true": "virtual_card_not_working",
+            "predicted": "get_disposable_virtual_card",
+            "count": 3,
+            "cost": 9.0,
+            "example": "Why is my disposable virtual card being denied?"
+          },
+          {
+            "true": "balance_not_updated_after_bank_transfer",
+            "predicted": "transfer_timing",
+            "count": 2,
+            "cost": 6.0,
+            "example": "When will my transfer be available in my account."
+          },
+          {
+            "true": "contactless_not_working",
+            "predicted": "card_arrival",
+            "count": 2,
+            "cost": 6.0,
+            "example": "what is required documents for new card process ?"
+          }
+        ]
+      }
+    }
+  },
+  "cost_matrix": {
+    "security_missed": 10.0,
+    "human_to_bot": 3.0,
+    "human_to_wrong_human": 1.0,
+    "bot_wrong_answer": 1.0,
+    "bot_to_security": 1.0,
+    "bot_to_human": 0.5
+  }
+}
