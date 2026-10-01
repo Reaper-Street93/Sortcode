@@ -1,8 +1,10 @@
 """Approaches C and D: Gemini, zero-shot and few-shot.
 
-Messages go in shuffled batches of 40 (so no batch is 40 of the same intent),
-and the answer is held to a JSON schema whose only allowed intents are the 77
-real ones. Every raw response is cached in results/raw/, so a rerun never
+Messages go in shuffled batches of 385, eight requests for the whole test set.
+That size is set by the free tier, not by choice: gemini-3.6-flash allows 20
+requests a day, so one-message-per-request (3,080 calls) or even batches of 40
+(77 calls) would take days. The answer is held to a JSON schema whose only
+allowed intents are the 77 real ones. Every raw response is cached in results/raw/, so a rerun never
 spends quota twice and every number can be re-scored without a key.
 """
 
@@ -21,7 +23,7 @@ from ..data import intents
 MODEL = "gemini-3.6-flash"
 THINKING = "low"
 PROMPT_VERSION = 1
-BATCH = 40
+BATCH = 385
 EXAMPLES_PER_INTENT = 3
 SEED = 0
 
@@ -83,8 +85,10 @@ def _call(client, text: str):
         response_json_schema=_schema(),
         thinking_config=types.ThinkingConfig(thinking_level=THINKING),
         automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+        max_output_tokens=32_768,  # ~20 tokens an answer; a batch of 385 must never be cut off
     )
-    for attempt in range(6):
+    # Few attempts on purpose: failed requests can still count against the daily quota.
+    for attempt in range(3):
         try:
             start = time.perf_counter()
             response = client.models.generate_content(model=MODEL, contents=text, config=config)
@@ -98,7 +102,36 @@ def _call(client, text: str):
                 time.sleep(wait)
                 continue
             raise
-    raise RuntimeError(f"{MODEL} still unavailable after 6 attempts")
+    raise RuntimeError(f"{MODEL} still unavailable after 3 attempts")
+
+
+def _ask(client, messages: list[str], examples) -> tuple[dict, dict]:
+    """Classify a list of messages; returns {index: intent} and what it cost.
+
+    Anything the model skipped, or answered with an id that doesn't exist, is
+    asked again on its own, rather than re-sending the whole batch.
+    """
+    answers, spent = {}, {"seconds": 0.0, "input_tokens": 0, "output_tokens": 0, "requests": 0}
+    pending = list(range(len(messages)))
+    for _ in range(3):
+        response, seconds = _call(client, prompt([messages[i] for i in pending], examples))
+        usage = response.usage_metadata
+        spent["seconds"] += seconds
+        spent["input_tokens"] += usage.prompt_token_count or 0
+        spent["output_tokens"] += (usage.candidates_token_count or 0) + (usage.thoughts_token_count or 0)
+        spent["requests"] += 1
+        try:
+            reply = json.loads(response.text)
+        except json.JSONDecodeError:
+            reply = []
+        for a in reply:
+            if isinstance(a.get("id"), int) and 0 <= a["id"] < len(pending):
+                answers.setdefault(pending[a["id"]], a["intent"])
+        pending = [i for i in range(len(messages)) if i not in answers]
+        if not pending:
+            return answers, spent
+        print(f"  {len(pending)} messages unanswered, asking again for just those")
+    raise RuntimeError(f"{len(pending)} messages never got an answer")
 
 
 def run(name: str, test: pd.DataFrame, examples: list[tuple[str, str]] | None) -> tuple[list[str], list[dict]]:
@@ -127,28 +160,16 @@ def run(name: str, test: pd.DataFrame, examples: list[tuple[str, str]] | None) -
             if b in done:
                 continue
             messages = test["text"].iloc[rows].tolist()
-            for _ in range(3):
-                response, seconds = _call(client, prompt(messages, examples))
-                answers = json.loads(response.text)
-                by_id = {a["id"]: a["intent"] for a in answers}
-                if sorted(by_id) == list(range(len(rows))):
-                    break
-                print(f"  batch {b}: answer didn't cover every message, asking again")
-            else:
-                raise RuntimeError(f"batch {b} never came back complete")
-
-            usage = response.usage_metadata
+            answers, spent = _ask(client, messages, examples)
             record = {
-                "batch": b, "rows": rows, "intents": [by_id[i] for i in range(len(rows))],
-                "seconds": round(seconds, 3),
-                "input_tokens": usage.prompt_token_count or 0,
-                "output_tokens": (usage.candidates_token_count or 0) + (usage.thoughts_token_count or 0),
+                "batch": b, "rows": rows, "intents": [answers[i] for i in range(len(rows))],
+                **spent, "seconds": round(spent["seconds"], 3),
                 "model": MODEL, "prompt_version": PROMPT_VERSION,
             }
             cache.write(json.dumps(record) + "\n")
             cache.flush()
             done[b] = record
-            print(f"  batch {b + 1}/{len(batches)} in {seconds:.1f}s")
+            print(f"  batch {b + 1}/{len(batches)} in {spent['seconds']:.1f}s")
 
     predicted = [None] * len(test)
     for record in done.values():
@@ -163,11 +184,11 @@ def usage_summary(records: list[dict], n_tickets: int) -> dict:
     dollars = (input_tokens * PRICE_PER_MILLION["input"] + output_tokens * PRICE_PER_MILLION["output"]) / 1e6
     return {
         "model": MODEL, "thinking_level": THINKING, "prompt_version": PROMPT_VERSION,
-        "batch_size": BATCH, "requests": len(records),
+        "batch_size": BATCH, "requests": sum(r["requests"] for r in records),
         "input_tokens": input_tokens, "output_tokens": output_tokens,
         "price_per_million_usd": PRICE_PER_MILLION,
         "cost_per_10k_tickets_usd": round(dollars / n_tickets * 10_000, 2),
         # A ticket waits for its whole batch, so both numbers matter.
         "seconds_per_ticket": round(sum(r["seconds"] for r in records) / n_tickets, 4),
-        "seconds_per_request": round(sum(r["seconds"] for r in records) / len(records), 2),
+        "seconds_per_request": round(sum(r["seconds"] for r in records) / sum(r["requests"] for r in records), 2),
     }
