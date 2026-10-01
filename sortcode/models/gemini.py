@@ -87,8 +87,9 @@ def _call(client, text: str):
         automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
         max_output_tokens=32_768,  # ~20 tokens an answer; a batch of 385 must never be cut off
     )
-    # Few attempts on purpose: failed requests can still count against the daily quota.
-    for attempt in range(3):
+    # Few attempts, spaced well apart: free-tier "high demand" spells last minutes,
+    # and failed requests can still count against the daily quota.
+    for attempt in range(4):
         try:
             start = time.perf_counter()
             response = client.models.generate_content(model=MODEL, contents=text, config=config)
@@ -96,13 +97,13 @@ def _call(client, text: str):
         except errors.APIError as err:
             if err.code == 429 and "PerDay" in str(err):
                 raise QuotaExhausted(f"daily free-tier quota for {MODEL} is used up") from err
-            if err.code in (429, 500, 503):
-                wait = 60 if err.code == 429 else 10 * 2**attempt
+            if err.code in (429, 500, 503) and attempt < 3:
+                wait = 60 * 2**attempt if err.code != 429 else 60
                 print(f"  {err.code}, waiting {wait}s")
                 time.sleep(wait)
                 continue
             raise
-    raise RuntimeError(f"{MODEL} still unavailable after 3 attempts")
+    raise RuntimeError(f"{MODEL} still unavailable after 4 attempts")
 
 
 def _ask(client, messages: list[str], examples) -> tuple[dict, dict]:
