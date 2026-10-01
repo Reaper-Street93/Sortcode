@@ -61,7 +61,8 @@ agent's desk. Each routing outcome carries a cost:
 
 Inside a human queue the exact intent doesn't matter: a person reads the
 message anyway. Inside `self_serve` it does, because the intent picks the
-answer. The weights live next to the mapping in `sortcode/routing.py`, and
+answer. Keyword rules only pick a queue, so they can never name the right
+answer: a self-serve ticket they send to `self_serve` still costs 1. The weights live next to the mapping in `sortcode/routing.py`, and
 every report prints the matrix it was scored with.
 
 ## The approaches
