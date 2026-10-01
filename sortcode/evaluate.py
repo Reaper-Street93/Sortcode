@@ -14,6 +14,11 @@ from .routing import COST, QUEUE_OF, cost
 RESULTS = Path(__file__).resolve().parent.parent / "results"
 
 
+def _r(x, digits=4) -> float:
+    """Round to a plain float, so numpy scalars don't leak into the JSON."""
+    return float(round(x, digits))
+
+
 def attach_costs(test: pd.DataFrame, pred_queue, pred_intent=None) -> pd.DataFrame:
     """One row per test message, with what was predicted and what it cost."""
     df = test.copy()
@@ -36,16 +41,16 @@ def score(df: pd.DataFrame) -> dict:
     to_bot = df[df["pred_queue"] == "self_serve"]
 
     metrics = {
-        "intent_accuracy": round((df["pred_intent"] == df["intent"]).mean(), 4) if has_intents else None,
-        "macro_f1": round(f1_score(df["intent"], df["pred_intent"], average="macro"), 4) if has_intents else None,
-        "queue_accuracy": round((df["pred_queue"] == df["true_queue"]).mean(), 4),
-        "security_recall": round((security["pred_queue"] == "security").mean(), 4),
+        "intent_accuracy": _r((df["pred_intent"] == df["intent"]).mean(), 4) if has_intents else None,
+        "macro_f1": _r(f1_score(df["intent"], df["pred_intent"], average="macro"), 4) if has_intents else None,
+        "queue_accuracy": _r((df["pred_queue"] == df["true_queue"]).mean(), 4),
+        "security_recall": _r((security["pred_queue"] == "security").mean(), 4),
         "security_missed": int((security["pred_queue"] != "security").sum()),
-        "harm_per_1000": round(df["cost"].mean() * 1000, 1),
-        "automation_rate": round(len(to_bot) / len(df), 4),
-        "automation_precision": round((to_bot["true_queue"] == "self_serve").mean(), 4) if len(to_bot) else None,
+        "harm_per_1000": _r(df["cost"].mean() * 1000, 1),
+        "automation_rate": _r(len(to_bot) / len(df), 4),
+        "automation_precision": _r((to_bot["true_queue"] == "self_serve").mean(), 4) if len(to_bot) else None,
         "queue_recall": {
-            q: round((g["pred_queue"] == q).mean(), 4) for q, g in df.groupby("true_queue")
+            q: _r((g["pred_queue"] == q).mean(), 4) for q, g in df.groupby("true_queue")
         },
         "harm_by_source": _harm_by_source(df),
         "worst_confusions": _worst_confusions(df, has_intents),
@@ -69,7 +74,7 @@ def _harm_by_source(df: pd.DataFrame) -> dict:
     kinds = df.apply(kind, axis=1)
     total = df["cost"].sum()
     by = df.groupby(kinds)["cost"].sum()
-    return {k: round(v / total, 3) for k, v in by.sort_values(ascending=False).items()} if total else {}
+    return {k: _r(v / total, 3) for k, v in by.sort_values(ascending=False).items()} if total else {}
 
 
 def _worst_confusions(df: pd.DataFrame, has_intents: bool, n: int = 10) -> list[dict]:
