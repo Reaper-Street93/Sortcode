@@ -78,6 +78,13 @@ every report prints the matrix it was scored with.
 The model may only answer with one of the 77 intents. Gemini is held to a JSON
 schema with the intent list as an enum, so no answer can be off the list.
 
+*Added before any Gemini result existed:* the free tier allows 20 requests a
+day for the model used (`gemini-3.6-flash`), so messages go to Gemini in
+shuffled batches of 385, eight requests for the whole test set. A
+production system would send one ticket at a time; batching may make the
+model slightly worse or slightly better, and the report says so rather than
+assuming either.
+
 ## How each approach is scored
 
 - **Intent accuracy** and **macro-F1** over the 77 intents (B–E).
