@@ -8,7 +8,6 @@
       "predicts": "queue",
       "patterns": 43,
       "seconds_per_ticket": 2.4966125727280395e-05,
-      "cost_per_10k_tickets_gbp": 0.0,
       "metrics": {
         "intent_accuracy": null,
         "macro_f1": null,
@@ -105,7 +104,8 @@
             "example": "im so mad right now. theres several charges that I think my x boyfriend made on my card. the companys on the website wouldn't refund me my money, they told me to contact my bank. DO something please."
           }
         ]
-      }
+      },
+      "cost_per_10k_tickets_usd": 0.0
     },
     "tfidf": {
       "run_date": "2026-10-01",
@@ -122,7 +122,6 @@
         "100": 0.9015513396552259
       },
       "seconds_per_ticket": 4.7826298585089e-05,
-      "cost_per_10k_tickets_gbp": 0.0,
       "metrics": {
         "intent_accuracy": 0.9146,
         "macro_f1": 0.9148,
@@ -219,7 +218,8 @@
             "example": "what is required documents for new card process ?"
           }
         ]
-      }
+      },
+      "cost_per_10k_tickets_usd": 0.0
     }
   },
   "cost_matrix": {
