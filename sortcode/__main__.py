@@ -5,6 +5,7 @@
     python -m sortcode zero     # Gemini zero-shot, needs GEMINI_API_KEY in .env
     python -m sortcode few      # Gemini few-shot
     python -m sortcode hybrid   # TF-IDF where sure, few-shot where not (needs tfidf + few first)
+    python -m sortcode drip     # one patient step of zero -> few -> hybrid, for running on a schedule
     python -m sortcode table
 """
 
@@ -88,6 +89,33 @@ def run_hybrid():
     save("hybrid", df, score(df), meta)
 
 
+def drip():
+    """Push the Gemini runs forward one try at a time, and say where things stand.
+
+    For a free tier that turns most requests away: each run tries once, keeps
+    going while requests succeed, and stops quietly at the first refusal.
+    """
+    from google.genai import errors
+
+    from .models import gemini
+
+    gemini.ATTEMPTS = 1
+    n = len(load("test"))
+    for name, few_shot in (("gemini_zero", False), ("gemini_few", True)):
+        done, needed = gemini.progress(name, n)
+        if done < needed:
+            try:
+                run_gemini(name, few_shot)
+            except (errors.APIError, RuntimeError) as err:
+                done, needed = gemini.progress(name, n)
+                reason = "daily quota used up" if isinstance(err, gemini.QuotaExhausted) else "Gemini busy"
+                print(f"drip: {name} {done}/{needed} batches, stopped ({reason})")
+                return
+            print(f"drip: {name} complete")
+    run_hybrid()
+    print("drip: all done")
+
+
 def table():
     summary = json.loads((RESULTS / "summary.json").read_text())
     rows = [
@@ -116,6 +144,7 @@ COMMANDS = {
     "zero": lambda: run_gemini("gemini_zero", few_shot=False),
     "few": lambda: run_gemini("gemini_few", few_shot=True),
     "hybrid": run_hybrid,
+    "drip": drip,
     "table": table,
 }
 

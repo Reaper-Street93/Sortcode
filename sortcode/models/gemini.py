@@ -33,6 +33,11 @@ PRICE_PER_MILLION = {"input": 0.75, "output": 3.75}
 
 RAW = Path(__file__).resolve().parents[2] / "results" / "raw"
 
+# How many times one request is tried before giving up. `python -m sortcode drip`
+# sets it to 1, so a busy server costs a single request and the next scheduled
+# run tries again.
+ATTEMPTS = 4
+
 
 class QuotaExhausted(RuntimeError):
     pass
@@ -89,7 +94,7 @@ def _call(client, text: str):
     )
     # Few attempts, spaced well apart: free-tier "high demand" spells last minutes,
     # and failed requests can still count against the daily quota.
-    for attempt in range(4):
+    for attempt in range(ATTEMPTS):
         try:
             start = time.perf_counter()
             response = client.models.generate_content(model=MODEL, contents=text, config=config)
@@ -97,13 +102,13 @@ def _call(client, text: str):
         except errors.APIError as err:
             if err.code == 429 and "PerDay" in str(err):
                 raise QuotaExhausted(f"daily free-tier quota for {MODEL} is used up") from err
-            if err.code in (429, 500, 503) and attempt < 3:
+            if err.code in (429, 500, 503) and attempt < ATTEMPTS - 1:
                 wait = 60 * 2**attempt if err.code != 429 else 60
                 print(f"  {err.code}, waiting {wait}s")
                 time.sleep(wait)
                 continue
             raise
-    raise RuntimeError(f"{MODEL} still unavailable after 4 attempts")
+    raise RuntimeError(f"{MODEL} still unavailable after {ATTEMPTS} attempts")
 
 
 def _ask(client, messages: list[str], examples) -> tuple[dict, dict]:
@@ -177,6 +182,13 @@ def run(name: str, test: pd.DataFrame, examples: list[tuple[str, str]] | None) -
         for row, intent in zip(record["rows"], record["intents"]):
             predicted[row] = intent
     return predicted, list(done.values())
+
+
+def progress(name: str, n_tickets: int) -> tuple[int, int]:
+    """(batches done, batches needed) for one approach, read from its cache."""
+    path = RAW / f"{name}.jsonl"
+    done = len(path.read_text().splitlines()) if path.exists() else 0
+    return done, -(-n_tickets // BATCH)
 
 
 def usage_summary(records: list[dict], n_tickets: int) -> dict:
