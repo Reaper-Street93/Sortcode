@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sortcode — which support tickets can a machine handle?</title>
+  <meta name="description" content="Five ways to route card-support tickets, scored by what their mistakes would cost. Try a message: the model runs in your browser." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap">
+      <a class="wordmark" href="./">Sortcode <span class="sortcode-tag" title="77 intents · 5 queues · 40 test messages each">77-05-40</span></a>
+      <nav>
+        <a href="https://github.com/Reaper-Street93/Sortcode/blob/main/REPORT.md">Write-up</a>
+        <a class="hide-narrow" href="https://github.com/Reaper-Street93/Sortcode">Code</a>
+        <button class="theme-toggle" id="theme" type="button" aria-label="Switch light or dark">Theme</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="eyebrow">Card-support ticket triage</p>
+      <h1>Which messages can a machine safely handle?</h1>
+      <p class="lede">
+        A sort code sends money to the right bank. Sortcode sends each support ticket to the right
+        team, then scores five ways of doing it by <strong>what their mistakes would cost</strong>:
+        a stolen card answered by an FAQ bot is a different failure from an FAQ landing on an agent's desk.
+      </p>
+    </div>
+
+    <section aria-labelledby="try-h">
+      <h2 id="try-h">Try a message</h2>
+      <p class="section-note">Write a customer message, or try one of these.</p>
+      <div class="slip">
+        <div class="slip-input">
+          <label for="msg">Customer message</label>
+          <textarea id="msg" rows="2" placeholder="e.g. my card was nicked on the tube last night"></textarea>
+          <div class="examples" id="examples"></div>
+        </div>
+        <div class="routes" id="routes" aria-live="polite"></div>
+        <div class="gemini-note">
+          <strong>Gemini isn't run live here.</strong> The free tier allows 20 requests a day, which a public page
+          would use up in minutes. Its answers on all 3,080 test messages are in the explorer below.
+        </div>
+      </div>
+      <p class="privacy">The model runs in your browser. Nothing you type leaves this page.</p>
+    </section>
+
+    <section aria-labelledby="results-h">
+      <h2 id="results-h">How each approach did</h2>
+      <p class="section-note">3,080 test messages from BANKING77, 40 for each of 77 intents. Each approach was scored once, after it was frozen.</p>
+      <div class="table-scroll"><table id="results"></table></div>
+      <div class="chart" id="harm-chart">
+        <h3>Harm per 1,000 tickets</h3>
+        <p>A missed fraud ticket costs 10, a real problem answered by a bot 3, an FAQ sent to a person 0.5. Lower is better.</p>
+        <div id="bars"></div>
+        <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="explore-h">
+      <h2 id="explore-h">Inside the test set</h2>
+      <p class="section-note">Every real test message, where each approach sent it, and what that cost.</p>
+      <div class="filters">
+        <select id="story" aria-label="Show"></select>
+        <select id="queue" aria-label="Really belongs to"></select>
+        <input id="search" type="search" placeholder="Search messages" aria-label="Search messages" />
+      </div>
+      <p class="story-note" id="story-note"></p>
+      <p class="count" id="count"></p>
+      <div id="tickets"></div>
+      <button class="more" id="more" type="button" hidden>Show more</button>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>
+        Data: <a href="https://github.com/PolyAI-LDN/task-specific-datasets">BANKING77</a> by PolyAI, CC-BY-4.0
+        (Casanueva et al., 2020). The browser model is the benchmarked one, checked to give the same answer as
+        Python on all 3,080 test messages.
+      </p>
+      <p>
+        Built by <a href="https://github.com/Reaper-Street93">Sebastian Barclay</a> with Claude Code as a pair
+        programmer. Method and caveats in the <a href="https://github.com/Reaper-Street93/Sortcode/blob/main/REPORT.md">write-up</a>.
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
