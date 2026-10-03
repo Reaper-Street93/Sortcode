@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Card desk — a triage case study for a prepaid travel card</title>
+  <meta name="description" content="An independent case study: triage for a prepaid travel-card support desk, modelled on Caxton's Currency Card from public information. Team, where to look, and a reply to start from." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&family=Spline+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="desk.css" />
+  <script>
+    try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="wrap">
+      <a class="wordmark" href="../">Sortcode <span class="sortcode-tag">CARD DESK</span></a>
+      <nav>
+        <a href="../">Benchmark</a>
+        <a class="hide-narrow" href="https://github.com/Reaper-Street93/Sortcode/tree/main/docs/caxton">Code</a>
+        <button class="theme-toggle" id="theme" type="button" aria-label="Switch light or dark">Theme</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <p class="eyebrow">Case study · prepaid travel-card support</p>
+      <h1>A triage desk for a prepaid travel card</h1>
+      <p class="lede">
+        Modelled on <strong>Caxton's Currency Card</strong> using only public information: Caxton's published terms
+        and fees, Thredd's Smart Client guide and code lists, and Checkout.com's response codes. Type a customer
+        message to get the team it belongs with, <strong>where to look</strong>, and a reply to start from.
+      </p>
+      <p class="notice">
+        <strong>Independent project.</strong> Not affiliated with, endorsed by or built for Caxton, Thredd or
+        Checkout.com. Built only from the <a href="#sources">public sources below</a>, with no internal information
+        and no customer data. The routing model was trained on BANKING77, a public dataset from a similar card app,
+        not on Caxton's tickets.
+      </p>
+    </div>
+
+    <section aria-labelledby="triage-h">
+      <h2 id="triage-h">Triage a message</h2>
+      <p class="section-note">Write what a customer might send, or try one of these.</p>
+      <div class="slip">
+        <div class="slip-input">
+          <label for="msg">Customer message</label>
+          <textarea id="msg" rows="2" placeholder="e.g. my card got declined at a cash machine in Lisbon"></textarea>
+          <div class="examples" id="examples"></div>
+        </div>
+        <div id="verdict" aria-live="polite"></div>
+      </div>
+      <p class="privacy">The model runs in your browser. Nothing you type leaves this page.</p>
+    </section>
+
+    <section aria-labelledby="codes-h">
+      <h2 id="codes-h">Decline code lookup</h2>
+      <p class="section-note">
+        A code on the customer's <strong>card</strong> comes from the card processor (Thredd). A code on a
+        <strong>top-up</strong> comes from the customer's own bank, via the payment processor (Checkout.com).
+      </p>
+      <div class="code-box">
+        <label class="code-input"><span>Code</span><input id="code" type="text" inputmode="text" autocomplete="off" placeholder="e.g. 75, G5, 20051" maxlength="6" /></label>
+        <div id="code-result" aria-live="polite"></div>
+        <div class="code-groups" id="code-groups"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="voice-h">
+      <h2 id="voice-h">What customers say</h2>
+      <p class="section-note">
+        Recurring themes in public reviews, paraphrased, each tied to the playbook that answers it. These are themes,
+        not measured counts.
+      </p>
+      <div class="ratings" id="ratings"></div>
+      <div class="themes" id="themes"></div>
+    </section>
+
+    <section aria-labelledby="sources" id="sources">
+      <h2>Sources</h2>
+      <p class="section-note" id="retrieved"></p>
+      <ul class="sources" id="source-list"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>
+        Independent case study by <a href="https://github.com/Reaper-Street93">Sebastian Barclay</a>, built with
+        Claude Code as a pair programmer. Fees, limits and processes change; always check the current terms.
+        Part of <a href="../">Sortcode</a>, which benchmarks five ways to route card-support tickets.
+      </p>
+    </div>
+  </footer>
+
+  <script type="module" src="desk.js"></script>
+</body>
+</html>
