@@ -6,6 +6,7 @@
     python -m sortcode few      # Gemini few-shot
     python -m sortcode hybrid   # TF-IDF where sure, few-shot where not (needs tfidf + few first)
     python -m sortcode drip     # one patient step of zero -> few -> hybrid, for running on a schedule
+    python -m sortcode demo     # export the model and results the demo page in docs/ runs on
     python -m sortcode table
 """
 
@@ -147,6 +148,7 @@ COMMANDS = {
     "few": lambda: run_gemini("gemini_few", few_shot=True),
     "hybrid": run_hybrid,
     "drip": drip,
+    "demo": lambda: __import__("sortcode.export_demo", fromlist=["main"]).main(),
     "table": table,
 }
 
