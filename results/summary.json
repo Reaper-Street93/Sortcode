@@ -339,6 +339,125 @@
           }
         ]
       }
+    },
+    "gemini_few": {
+      "run_date": "2026-10-03",
+      "python": "3.13.15",
+      "scikit_learn": "1.9.1",
+      "approach": "Gemini, few-shot",
+      "predicts": "intent",
+      "examples_in_prompt": 231,
+      "model": "gemini-3.5-flash-lite",
+      "thinking_level": "low",
+      "prompt_version": 1,
+      "batch_size": 385,
+      "requests": 8,
+      "input_tokens": 101790,
+      "output_tokens": 62962,
+      "price_per_million_usd": {
+        "input": 0.3,
+        "output": 2.5
+      },
+      "cost_per_10k_tickets_usd": 0.61,
+      "seconds_per_ticket": 0.043,
+      "seconds_per_request": 16.54,
+      "metrics": {
+        "intent_accuracy": 0.8617,
+        "macro_f1": 0.8601,
+        "queue_accuracy": 0.9562,
+        "security_recall": 0.9708,
+        "security_missed": 7,
+        "harm_per_1000": 158.6,
+        "automation_rate": 0.5321,
+        "automation_precision": 0.9536,
+        "queue_recall": {
+          "account": 0.9333,
+          "disputes": 0.9125,
+          "payments": 0.9312,
+          "security": 0.9708,
+          "self_serve": 0.9769
+        },
+        "harm_by_source": {
+          "human_to_bot": 0.461,
+          "bot_wrong_answer": 0.319,
+          "security_missed": 0.143,
+          "human_to_wrong_human": 0.033,
+          "bot_to_human": 0.032,
+          "bot_to_security": 0.012
+        },
+        "worst_confusions": [
+          {
+            "true": "pending_transfer",
+            "predicted": "transfer_timing",
+            "count": 9,
+            "cost": 27.0,
+            "example": "How long for money transfer to show?"
+          },
+          {
+            "true": "wrong_exchange_rate_for_cash_withdrawal",
+            "predicted": "cash_withdrawal_charge",
+            "count": 8,
+            "cost": 24.0,
+            "example": "I made a withdraw from the ATM this past holiday and it seems like a was charged too much. If I would have   known about these charges I wouldn't have made a withdraw."
+          },
+          {
+            "true": "balance_not_updated_after_bank_transfer",
+            "predicted": "transfer_timing",
+            "count": 7,
+            "cost": 21.0,
+            "example": "How long will it take for my transferred money to show up?"
+          },
+          {
+            "true": "transfer_not_received_by_recipient",
+            "predicted": "transfer_timing",
+            "count": 7,
+            "cost": 21.0,
+            "example": "how long do money transfers take?"
+          },
+          {
+            "true": "direct_debit_payment_not_recognised",
+            "predicted": "request_refund",
+            "count": 2,
+            "cost": 20.0,
+            "example": "I don't understand where this debit came from and want it removed."
+          },
+          {
+            "true": "unable_to_verify_identity",
+            "predicted": "verify_my_identity",
+            "count": 5,
+            "cost": 15.0,
+            "example": "Help my verify my id."
+          },
+          {
+            "true": "why_verify_identity",
+            "predicted": "verify_my_identity",
+            "count": 13,
+            "cost": 13.0,
+            "example": "do I need to verify my identity every time I log into my account?"
+          },
+          {
+            "true": "pending_top_up",
+            "predicted": "topping_up_by_card",
+            "count": 4,
+            "cost": 12.0,
+            "example": "I've already topped up, but I cannot see the funds being available. What happened?"
+          },
+          {
+            "true": "card_delivery_estimate",
+            "predicted": "card_arrival",
+            "count": 11,
+            "cost": 11.0,
+            "example": "my card was not in the mail again can you advise?"
+          },
+          {
+            "true": "card_payment_not_recognised",
+            "predicted": "extra_charge_on_statement",
+            "count": 1,
+            "cost": 10.0,
+            "example": "I have a strange payment in my statement"
+          }
+        ]
+      }
     }
   },
   "cost_matrix": {
