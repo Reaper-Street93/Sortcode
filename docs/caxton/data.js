@@ -367,7 +367,7 @@ export const PLAYBOOK_OF = {
 
 // BANKING77 has no intent for the account management fee, which is one of
 // the most common review complaints, so it's caught by keywords first.
-export const ACCOUNT_FEE = /\b(dorman\w*|inactiv\w*|account management fee|£2 (a|per|every) month|monthly fee)\b/i;
+export const ACCOUNT_FEE = /\bdorman\w*|\binactiv\w*|\baccount management fee|£2 (a|per|every) month|\bmonthly fee\b/i;
 
 // Decline and status codes an agent meets. Thredd: when the customer's
 // Caxton card is declined. Checkout.com: when their top-up from another
