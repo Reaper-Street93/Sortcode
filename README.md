@@ -11,37 +11,37 @@ is a different order of failure from an FAQ that lands on an agent's desk.
 The spec came first: [CONTRACT.md](CONTRACT.md) sets out the queues, the cost
 of each kind of mistake and the metrics, all fixed before any code.
 
-## Results so far
+## Results
 
 3,080 test messages from [BANKING77](data/README.md), 40 for each of 77
 intents. Each approach was scored on the test set once, after it was frozen.
+**The write-up: [REPORT.md](REPORT.md).**
 
-| | Keyword rules | TF-IDF + logistic regression |
-|---|---:|---:|
-| Intent accuracy | — | 91.5% |
-| Queue accuracy | 78.4% | 96.7% |
-| **Security tickets missed (of 240)** | **70** | **6** |
-| **Harm per 1,000 tickets** | **1,253** | **91** |
-| Sent to self-serve | 69.2% | 51.8% |
-| …of which really self-serve | 72.6% | 97.8% |
-| Cost to run | £0 | £0 |
+| | Rules | TF-IDF + logistic regression | Gemini zero-shot | Gemini few-shot | Hybrid |
+|---|---:|---:|---:|---:|---:|
+| Right intent | — | 91.5% | 75.4% | 86.2% | **91.9%** |
+| Right queue | 78.4% | 96.7% | 91.2% | 95.6% | **97.1%** |
+| **Fraud and lost-card missed (of 240)** | 70 | 6 | 15 | 7 | **5** |
+| **Harm per 1,000 tickets** | 1,253 | **91** | 308 | 159 | 98 |
+| Cost per 10,000 tickets | $0 | $0 | $0.59 | $0.61 | $0.12 |
 
 - **Keyword rules miss three in ten fraud and lost-card messages.** "Help!
   Someone stole my card!" went to the FAQ bot, because the rule matches
-  "stolen", not "stole". So did "Somebody used my card to make a purchase".
-  That's how keyword routers fail: customers don't write the words the
-  rules were written for.
-- **A cheap classic model cuts the harm by 14×.** It trains in about nine
-  seconds on a laptop and costs nothing to run.
-- **Its mistakes are mostly unsure ones.** On the security tickets it got wrong,
-  its average confidence was 0.39, against 0.89 on everything it got right.
-  That's the case for a hybrid: let it handle what it's sure of and escalate
-  the rest. The exception worth noting is "I cannot find my credit card", routed
-  to a top-up FAQ with 0.85 confidence, a confident mistake no threshold would
-  catch.
+  "stolen", not "stole".
+- **A free classic model cuts the harm 14×** and, given labelled tickets, an
+  LLM didn't beat it.
+- **The LLM reads the question; an agent hears the problem.** Gemini answered
+  "How long for money transfer to show?" as a timing FAQ, when that customer's
+  transfer hasn't arrived. On the hardest tickets it sent nearly twice as many
+  real problems to the bot, which is why the hybrid has the best accuracy and
+  the fewest fraud misses, yet slightly more harm than TF-IDF alone.
+- **Three examples per intent lifted Gemini from 75% to 86%** and roughly
+  halved its harm. A stronger model (`gemini-3.6-flash`, 83% zero-shot on the
+  1,155 messages it finished) narrows the gap to TF-IDF without closing it.
 
-Next: Gemini zero-shot and few-shot on the same test set, the hybrid, and a
-one-page memo on what to automate.
+Gemini is `gemini-3.5-flash-lite`, sent 385 messages per request because the
+free tier allows 20 requests a day; [CONTRACT.md](CONTRACT.md) records why and
+when that changed.
 
 ## Run it
 
@@ -50,12 +50,16 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python -m unittest discover -s tests -t .   # routing + scoring tests
 .venv/bin/python -m sortcode rules                    # ~1 second
 .venv/bin/python -m sortcode tfidf                    # ~2 minutes, mostly cross-validation
+.venv/bin/python -m sortcode zero                     # Gemini, needs GEMINI_API_KEY in .env
+.venv/bin/python -m sortcode few
+.venv/bin/python -m sortcode hybrid                   # reuses saved predictions, no API calls
 .venv/bin/python -m sortcode table
 ```
 
 Every prediction is saved in `results/predictions/`, one row per test message
-with its cost, and every metric in `results/summary.json`, so nothing has to be
-taken on trust.
+with its cost, every metric in `results/summary.json`, and every raw Gemini
+response in `results/raw/`, so nothing has to be taken on trust and nothing
+needs a key to re-score.
 
 ## Where things live
 
