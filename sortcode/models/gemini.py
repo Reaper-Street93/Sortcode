@@ -1,11 +1,16 @@
 """Approaches C and D: Gemini, zero-shot and few-shot.
 
 Messages go in shuffled batches of 385, eight requests for the whole test set.
-That size is set by the free tier, not by choice: gemini-3.6-flash allows 20
-requests a day, so one-message-per-request (3,080 calls) or even batches of 40
-(77 calls) would take days. The answer is held to a JSON schema whose only
-allowed intents are the 77 real ones. Every raw response is cached in results/raw/, so a rerun never
-spends quota twice and every number can be re-scored without a key.
+That size is set by the free tier, not by choice: it allows 20 requests a day
+per model, so one-message-per-request (3,080 calls) or even batches of 40 (77
+calls) would take days. The answer is held to a JSON schema whose only allowed
+intents are the 77 real ones. Every raw response is cached in results/raw/, so a
+rerun never spends quota twice and every number can be re-scored without a key.
+
+The model is gemini-3.5-flash-lite. gemini-3.6-flash was the first choice, but
+over two days it turned away almost every free-tier request as "high demand"
+(three of eight zero-shot batches got through). Those three batches are kept in
+results/raw/flash-3.6_zero_partial.jsonl for a like-for-like comparison.
 """
 
 import json
@@ -20,7 +25,7 @@ from google.genai import errors, types
 
 from ..data import intents
 
-MODEL = "gemini-3.6-flash"
+MODEL = "gemini-3.5-flash-lite"
 THINKING = "low"
 PROMPT_VERSION = 1
 BATCH = 385
@@ -28,8 +33,8 @@ EXAMPLES_PER_INTENT = 3
 SEED = 0
 
 # Standard paid tier, USD per million tokens, from
-# https://ai.google.dev/gemini-api/docs/pricing (valid to 31 Dec 2026; doubles after).
-PRICE_PER_MILLION = {"input": 0.75, "output": 3.75}
+# https://ai.google.dev/gemini-api/docs/pricing (as of October 2026).
+PRICE_PER_MILLION = {"input": 0.30, "output": 2.50}
 
 RAW = Path(__file__).resolve().parents[2] / "results" / "raw"
 
