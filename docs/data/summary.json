@@ -1,0 +1,63 @@
+{
+ "approaches": {
+  "rules": {
+   "name": "Keyword rules",
+   "cost_per_10k_tickets_usd": 0.0,
+   "intent_accuracy": null,
+   "queue_accuracy": 0.7838,
+   "security_missed": 70,
+   "harm_per_1000": 1253.2,
+   "automation_rate": 0.6925,
+   "automation_precision": 0.7257
+  },
+  "tfidf": {
+   "name": "TF-IDF + logistic regression",
+   "cost_per_10k_tickets_usd": 0.0,
+   "intent_accuracy": 0.9146,
+   "queue_accuracy": 0.9666,
+   "security_missed": 6,
+   "harm_per_1000": 90.7,
+   "automation_rate": 0.5185,
+   "automation_precision": 0.9781
+  },
+  "gemini_zero": {
+   "name": "Gemini, zero-shot",
+   "cost_per_10k_tickets_usd": 0.59,
+   "intent_accuracy": 0.7542,
+   "queue_accuracy": 0.912,
+   "security_missed": 15,
+   "harm_per_1000": 308.3,
+   "automation_rate": 0.5354,
+   "automation_precision": 0.92
+  },
+  "gemini_few": {
+   "name": "Gemini, few-shot",
+   "cost_per_10k_tickets_usd": 0.61,
+   "intent_accuracy": 0.8617,
+   "queue_accuracy": 0.9562,
+   "security_missed": 7,
+   "harm_per_1000": 158.6,
+   "automation_rate": 0.5321,
+   "automation_precision": 0.9536
+  },
+  "hybrid": {
+   "name": "Hybrid: TF-IDF where sure, Gemini few-shot otherwise",
+   "cost_per_10k_tickets_usd": 0.12,
+   "intent_accuracy": 0.9188,
+   "queue_accuracy": 0.9714,
+   "security_missed": 5,
+   "harm_per_1000": 97.6,
+   "automation_rate": 0.5302,
+   "automation_precision": 0.9675
+  }
+ },
+ "gemini_model": "gemini-3.5-flash-lite",
+ "cost_matrix": {
+  "security_missed": 10.0,
+  "human_to_bot": 3.0,
+  "human_to_wrong_human": 1.0,
+  "bot_wrong_answer": 1.0,
+  "bot_to_security": 1.0,
+  "bot_to_human": 0.5
+ }
+}
