@@ -8,6 +8,11 @@ to the right queue, then scores every approach by **what its mistakes would
 cost the business**, not just by accuracy. A stolen card that gets an FAQ link
 is a different order of failure from an FAQ that lands on an agent's desk.
 
+**Try it: [reaper-street93.github.io/Sortcode](https://reaper-street93.github.io/Sortcode/)**.
+Type a customer message and see where each approach sends it, or browse all
+3,080 test messages and what every mistake cost. The model runs in your
+browser, so nothing you type leaves the page.
+
 The spec came first: [CONTRACT.md](CONTRACT.md) sets out the queues, the cost
 of each kind of mistake and the metrics, all fixed before any code.
 
@@ -54,6 +59,8 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python -m sortcode few
 .venv/bin/python -m sortcode hybrid                   # reuses saved predictions, no API calls
 .venv/bin/python -m sortcode table
+.venv/bin/python -m sortcode demo                     # export the model + results for the demo page
+node tests/check_demo_model.mjs                       # browser model vs Python, all 3,080 messages
 ```
 
 Every prediction is saved in `results/predictions/`, one row per test message
@@ -67,6 +74,9 @@ needs a key to re-score.
   kind of mistake costs. The judgement calls are all in this one file.
 - `sortcode/evaluate.py`: the scoring every approach goes through.
 - `sortcode/models/`: the approaches.
+- `docs/`: the demo page, served by GitHub Pages. `docs/model.js` is the TF-IDF
+  model ported to JavaScript; `tests/check_demo_model.mjs` checks it gives the
+  same answer as Python on every test message.
 
 Data: BANKING77 by PolyAI, CC-BY-4.0 (Casanueva et al., 2020). Built with
 Claude Code as a pair programmer.
