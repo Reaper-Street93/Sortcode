@@ -108,7 +108,9 @@ def drip():
                 run_gemini(name, few_shot)
             except (errors.APIError, RuntimeError) as err:
                 done, needed = gemini.progress(name, n)
-                reason = "daily quota used up" if isinstance(err, gemini.QuotaExhausted) else "Gemini busy"
+                code = getattr(err, "code", None)
+                reason = ("daily quota used up" if isinstance(err, gemini.QuotaExhausted)
+                          else f"Gemini {code or 'error'}: {str(err)[:80]}")
                 print(f"drip: {name} {done}/{needed} batches, stopped ({reason})")
                 return
             print(f"drip: {name} complete")
