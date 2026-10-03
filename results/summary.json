@@ -220,6 +220,125 @@
         ]
       },
       "cost_per_10k_tickets_usd": 0.0
+    },
+    "gemini_zero": {
+      "run_date": "2026-10-03",
+      "python": "3.13.15",
+      "scikit_learn": "1.9.1",
+      "approach": "Gemini, zero-shot",
+      "predicts": "intent",
+      "examples_in_prompt": 0,
+      "model": "gemini-3.5-flash-lite",
+      "thinking_level": "low",
+      "prompt_version": 1,
+      "batch_size": 385,
+      "requests": 8,
+      "input_tokens": 58438,
+      "output_tokens": 65721,
+      "price_per_million_usd": {
+        "input": 0.3,
+        "output": 2.5
+      },
+      "cost_per_10k_tickets_usd": 0.59,
+      "seconds_per_ticket": 0.046,
+      "seconds_per_request": 17.72,
+      "metrics": {
+        "intent_accuracy": 0.7542,
+        "macro_f1": 0.7488,
+        "queue_accuracy": 0.912,
+        "security_recall": 0.9375,
+        "security_missed": 15,
+        "harm_per_1000": 308.3,
+        "automation_rate": 0.5354,
+        "automation_precision": 0.92,
+        "queue_recall": {
+          "account": 0.925,
+          "disputes": 0.8125,
+          "payments": 0.87,
+          "security": 0.9375,
+          "self_serve": 0.9481
+        },
+        "harm_by_source": {
+          "human_to_bot": 0.408,
+          "bot_wrong_answer": 0.339,
+          "security_missed": 0.158,
+          "human_to_wrong_human": 0.046,
+          "bot_to_human": 0.038,
+          "bot_to_security": 0.011
+        },
+        "worst_confusions": [
+          {
+            "true": "pending_transfer",
+            "predicted": "transfer_timing",
+            "count": 14,
+            "cost": 42.0,
+            "example": "How long for money transfer to show?"
+          },
+          {
+            "true": "direct_debit_payment_not_recognised",
+            "predicted": "extra_charge_on_statement",
+            "count": 4,
+            "cost": 40.0,
+            "example": "what is this charge on my account"
+          },
+          {
+            "true": "get_physical_card",
+            "predicted": "change_pin",
+            "count": 35,
+            "cost": 35.0,
+            "example": "What do I do with my card PIN?"
+          },
+          {
+            "true": "balance_not_updated_after_bank_transfer",
+            "predicted": "transfer_timing",
+            "count": 10,
+            "cost": 30.0,
+            "example": "I made a transfer a few hours ago from a UK banking account.  I do not yet see the transfer.  Please check on this for me."
+          },
+          {
+            "true": "transfer_not_received_by_recipient",
+            "predicted": "transfer_timing",
+            "count": 10,
+            "cost": 30.0,
+            "example": "How long does it take for a transfer to get to a recipient?"
+          },
+          {
+            "true": "wrong_exchange_rate_for_cash_withdrawal",
+            "predicted": "cash_withdrawal_charge",
+            "count": 8,
+            "cost": 24.0,
+            "example": "I took out money from a transaction machine and it exchanged the wrong dollar value amount from another currency!"
+          },
+          {
+            "true": "card_payment_not_recognised",
+            "predicted": "extra_charge_on_statement",
+            "count": 2,
+            "cost": 20.0,
+            "example": "I have a strange payment in my statement"
+          },
+          {
+            "true": "cash_withdrawal_not_recognised",
+            "predicted": "wrong_amount_of_cash_received",
+            "count": 2,
+            "cost": 20.0,
+            "example": "My app shows some cash I didn't get."
+          },
+          {
+            "true": "card_arrival",
+            "predicted": "card_delivery_estimate",
+            "count": 16,
+            "cost": 16.0,
+            "example": "Is there a way to know when my card will arrive?"
+          },
+          {
+            "true": "top_up_by_bank_transfer_charge",
+            "predicted": "transfer_fee_charged",
+            "count": 16,
+            "cost": 16.0,
+            "example": "how much do you charge to accept transfers"
+          }
+        ]
+      }
     }
   },
   "cost_matrix": {
