@@ -458,6 +458,117 @@
           }
         ]
       }
+    },
+    "hybrid": {
+      "run_date": "2026-10-03",
+      "python": "3.13.15",
+      "scikit_learn": "1.9.1",
+      "approach": "Hybrid: TF-IDF where sure, Gemini few-shot otherwise",
+      "predicts": "intent",
+      "confidence_threshold": 0.7708,
+      "target_accuracy": 0.98,
+      "train_share_handled_by_tfidf": 0.7576,
+      "train_accuracy_when_handled": 0.9801,
+      "test_share_escalated_to_gemini": 0.1987,
+      "cost_per_10k_tickets_usd": 0.12,
+      "seconds_per_ticket": 0.0086,
+      "metrics": {
+        "intent_accuracy": 0.9188,
+        "macro_f1": 0.9187,
+        "queue_accuracy": 0.9714,
+        "security_recall": 0.9792,
+        "security_missed": 5,
+        "harm_per_1000": 97.6,
+        "automation_rate": 0.5302,
+        "automation_precision": 0.9675,
+        "queue_recall": {
+          "account": 0.9417,
+          "disputes": 0.9469,
+          "payments": 0.9512,
+          "security": 0.9792,
+          "self_serve": 0.9875
+        },
+        "harm_by_source": {
+          "human_to_bot": 0.509,
+          "bot_wrong_answer": 0.243,
+          "security_missed": 0.166,
+          "human_to_wrong_human": 0.04,
+          "bot_to_human": 0.025,
+          "bot_to_security": 0.017
+        },
+        "worst_confusions": [
+          {
+            "true": "direct_debit_payment_not_recognised",
+            "predicted": "request_refund",
+            "count": 2,
+            "cost": 20.0,
+            "example": "I don't understand where this debit came from and want it removed."
+          },
+          {
+            "true": "pending_transfer",
+            "predicted": "transfer_timing",
+            "count": 6,
+            "cost": 18.0,
+            "example": "When will the transfer go through?"
+          },
+          {
+            "true": "balance_not_updated_after_bank_transfer",
+            "predicted": "transfer_timing",
+            "count": 4,
+            "cost": 12.0,
+            "example": "How long will it take for my transferred money to show up?"
+          },
+          {
+            "true": "wrong_exchange_rate_for_cash_withdrawal",
+            "predicted": "cash_withdrawal_charge",
+            "count": 4,
+            "cost": 12.0,
+            "example": "Will there be additional costs of I make a withdrawal from a local ATM of British pounds? I need some cash to feel comfortable on the journey home"
+          },
+          {
+            "true": "direct_debit_payment_not_recognised",
+            "predicted": "extra_charge_on_statement",
+            "count": 1,
+            "cost": 10.0,
+            "example": "what is this charge on my account"
+          },
+          {
+            "true": "lost_or_stolen_card",
+            "predicted": "card_arrival",
+            "count": 1,
+            "cost": 10.0,
+            "example": "Are you able to locate my card?"
+          },
+          {
+            "true": "lost_or_stolen_card",
+            "predicted": "topping_up_by_card",
+            "count": 1,
+            "cost": 10.0,
+            "example": "I cannot find my credit card."
+          },
+          {
+            "true": "pending_top_up",
+            "predicted": "topping_up_by_card",
+            "count": 3,
+            "cost": 9.0,
+            "example": "I've already topped up, but I cannot see the funds being available. What happened?"
+          },
+          {
+            "true": "transfer_not_received_by_recipient",
+            "predicted": "transfer_timing",
+            "count": 3,
+            "cost": 9.0,
+            "example": "how long do money transfers take?"
+          },
+          {
+            "true": "unable_to_verify_identity",
+            "predicted": "verify_my_identity",
+            "count": 3,
+            "cost": 9.0,
+            "example": "What do i need to verify my id?"
+          }
+        ]
+      }
     }
   },
   "cost_matrix": {
