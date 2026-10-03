@@ -13,6 +13,12 @@ Type a customer message and see where each approach sends it, or browse all
 3,080 test messages and what every mistake cost. The model runs in your
 browser, so nothing you type leaves the page.
 
+**Applied: [a triage desk for a prepaid travel card](https://reaper-street93.github.io/Sortcode/caxton/)**.
+Modelled on Caxton's Currency Card using only public information: each message
+gets a team, where to look (Thredd's Smart Client, the Checkout.com dashboard),
+a decline code lookup and a reply starter, every fact linked to its source.
+Independent, and not affiliated with Caxton, Thredd or Checkout.com.
+
 The spec came first: [CONTRACT.md](CONTRACT.md) sets out the queues, the cost
 of each kind of mistake and the metrics, all fixed before any code.
 
@@ -61,6 +67,7 @@ python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python -m sortcode table
 .venv/bin/python -m sortcode demo                     # export the model + results for the demo page
 node tests/check_demo_model.mjs                       # browser model vs Python, all 3,080 messages
+node tests/check_desk.mjs                             # card desk: every intent has a playbook, every fact a source
 ```
 
 Every prediction is saved in `results/predictions/`, one row per test message
