@@ -79,8 +79,15 @@ The model may only answer with one of the 77 intents. Gemini is held to a JSON
 schema with the intent list as an enum, so no answer can be off the list.
 
 *Added before any Gemini result existed:* the free tier allows 20 requests a
-day for the model used (`gemini-3.6-flash`), so messages go to Gemini in
-shuffled batches of 385, eight requests for the whole test set. A
+day per model, so messages go to Gemini in shuffled batches of 385, eight
+requests for the whole test set.
+
+*Changed after two days of trying:* the first-choice model, `gemini-3.6-flash`,
+turned away almost every free-tier request as "high demand" and finished only
+three of the eight zero-shot batches. The runs use `gemini-3.5-flash-lite`
+instead. The switch was about availability, not results. The three finished
+Flash batches (1,155 messages) are kept, and the report compares both models on
+exactly those messages. A
 production system would send one ticket at a time; batching may make the
 model slightly worse or slightly better, and the report says so rather than
 assuming either.
